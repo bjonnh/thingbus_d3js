@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<head>
+  <meta HTTP-EQUIV="X-UA-COMPATIBLE" CONTENT="IE=EmulateIE9" >
+  <script type="text/javascript" src="d3.min.js"></script>
+  <script type="text/javascript" src="radialProgress.js"></script>
+  <script type="text/javascript" src="jquery-1.11.2.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="style.css">
+
+  <style>
+
+svg {
+font: 10px sans-serif;
+}
+.line {
+fill: none;
+stroke: #000;
+stroke-width: 1.5px;
+}
+.axis path,
+.axis line {
+fill: none;
+stroke: #000;
+shape-rendering: crispEdges;
+}
+
+   #people {
+     float:right;
+   }
+   .user {
+     border: 1px solid purple;
+     border-radius: 4px;
+     float:right;
+     background-color:purple;
+     color:white;
+     margin: 2px;
+   }
+   #test .arc2 {
+     stroke-weight:0.1;
+     fill: #3660b0;
+   }
+
+   #outer {
+     background:#FFFFFF;
+     border-radius: 5px;
+     color: #000;
+   }
+   .divcell {
+     float:left;
+   }
+   #div1, #div2, #div3, #div4 {
+     width: 33%;
+     height: 200px;
+     box-sizing: border-box;
+     float:left;
+   }
+
+   #div2 .arc {
+     stroke-weight: 0.1;
+     fill: #f0a417;
+   }
+
+   #div2 .arc2 {
+     stroke-weight: 0.1;
+     fill: #b00d08;
+   }
+
+   #div3 .arc {
+     stroke-weight: 0.1;
+     fill: #1d871b;
+   }
+
+
+   .selectedRadial {
+     border-radius: 3px;
+     background: #f4f4f4;
+     color: #000;
+     box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+     -moz-box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+     border: 1px solid rgba(200,200,200,0.85);
+   }
+
+   .radial {
+     border-radius: 3px;
+     background: #FFFFFF;
+     color: #000;
+
+   }
+
+
+  </style>
+</head>
+
+<body>
+
+  <div id='outer' style="width: 1000px; height:800px; margin: 0px auto; margin-top:20px; padding:10px">
+    <div id="main" style="width:1000px; height:200px; margin: 0px auto; ">
+      <div class="divcell">
+        <div class="title"><h1>Electronics lab</h1></div>
+        <div id="div1"></div>
+        <div id="div2"></div>
+      </div><br>
+      <div class="divcell">
+        <div class="title"><h1>Shop</h1></div>
+        <div id="div3"></div>
+        <div id="div4"></div>
+      </div>
+      <div id="people">
+	Nobody
+      </div>
+    </div>
+  </div>
+
+
+
+  <script language="JavaScript">
+
+   var div1=d3.select(document.getElementById('div1'));
+   var div2=d3.select(document.getElementById('div2'));
+   var div3=d3.select(document.getElementById('div3'));
+   var div4=d3.select(document.getElementById('div4'));
+   start();
+
+   function onClick1() {
+     deselect();
+     div1.attr("class","selectedRadial");
+     
+   }
+
+   function onClick2() {
+     deselect();
+     div2.attr("class","selectedRadial");
+   }
+
+   function labelFunction(val,min,max) {
+
+   }
+
+   function deselect() {
+     div1.attr("class","radial");
+     div2.attr("class","radial");
+     div3.attr("class","radial");
+     div4.attr("class","radial");
+   }
+   var rp1;
+   var rp2;
+   var rp3;
+   var rp4;
+   function start() {
+
+     rp1 = radialProgress(document.getElementById('div1'))
+         .label("Luminance")
+	 .diameter(150)
+	 .value(0)
+         .render();
+     rp2 = radialProgress(document.getElementById('div2'))
+         .label("Busy")
+         .diameter(150)
+         .value(0)
+         .render();
+     rp3 = radialProgress(document.getElementById('div3'))
+         .label("Luminance")
+	 .diameter(150)
+	 .value(0)
+         .render();
+     rp4 = radialProgress(document.getElementById('div4'))
+         .label("Busy")
+         .diameter(150)
+         .value(0)
+         .render();
+
+   }
+
+
+var n = 40,
+   random = d3.random.normal(0, .2),
+datag = d3.range(n).map(random);
+var margin = {top: 20, right: 20, bottom: 20, left: 40},
+width = 960 - margin.left - margin.right,
+height = 500 - margin.top - margin.bottom;
+var x = d3.scale.linear()
+.domain([0, n - 1])
+.range([0, width]);
+var y = d3.scale.linear()
+.domain([-1, 1])
+.range([height, 0]);
+var line = d3.svg.line().interpolate("basis")
+.x(function(d, i) { return x(i); })
+.y(function(d, i) { return y(d); });
+var svg = d3.select("body").append("svg")
+.attr("width", width + margin.left + margin.right)
+.attr("height", height + margin.top + margin.bottom)
+.append("g")
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+svg.append("defs").append("clipPath")
+.attr("id", "clip")
+.append("rect")
+.attr("width", width)
+.attr("height", height);
+svg.append("g")
+.attr("class", "x axis")
+.attr("transform", "translate(0," + y(0) + ")")
+.call(d3.svg.axis().scale(x).orient("bottom"));
+svg.append("g")
+.attr("class", "y axis")
+.call(d3.svg.axis().scale(y).orient("left"));
+var path = svg.append("g")
+.attr("clip-path", "url(#clip)")
+.append("path")
+.datum(datag)
+.attr("class", "line")
+.attr("d", line);
+   
+   (function poll() {
+     setTimeout(function() {
+       $.ajax({ url: "index.json", success: function(data) {
+	 rp1.value(data['spacemon.electronics'].luminance/2).render();
+	 rp2.value(data['spacemon.electronics'].ratio_busy*100).render();
+	 rp3.value(data['spacemon.shop'].luminance/2).render();
+	 rp4.value(data['spacemon.shop'].ratio_busy*100).render();
+	 var arr = data['presence.peoplemon']['users_present'];
+	 var text = "People here:";
+	 for(var i=0; i<arr.length; i++) {
+	   text = text + "<div class=\"user\">"+arr[i]+"</div>";
+	 }
+	 $('#people').html(text);
+
+datag.push((data['spacemon.electronics'].ratio_busy-0.44));
+// redraw the line, and slide it to the left
+path
+.attr("d", line)
+.attr("transform", null)
+.transition()
+.duration(500)
+.ease("linear")  
+.attr("transform", "translate(" + x(-1) + ",0)");
+// pop the old data point off the front
+datag.shift();
+	 
+       }, dataType: "json", complete: poll });
+
+     }, 400);
+
+   })();
+
+
+
+  </script>
+
+ </body>
+</html>
+     <!--
+/**
+Copyright (c) 2014 BrightPoint Consulting, Inc.
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+              ->
