@@ -107,6 +107,13 @@ shape-rendering: crispEdges;
       <div id="people">
 	Nobody
       </div>
+<div id="cta">
+	<div id="bus">
+      <div id="bus_152">
+	No data available
+      </div>
+</div>
+</div>
     </div>
   </div>
 
@@ -213,17 +220,34 @@ var path = svg.append("g")
    (function poll() {
      setTimeout(function() {
        $.ajax({ url: "index.json", success: function(data) {
+	if ('spacemon.electronics' in data) {
 	 rp1.value(data['spacemon.electronics'].luminance/2).render();
 	 rp2.value(data['spacemon.electronics'].ratio_busy*100).render();
+}	
+	if ('spacemon.shop' in data) {
 	 rp3.value(data['spacemon.shop'].luminance/2).render();
 	 rp4.value(data['spacemon.shop'].ratio_busy*100).render();
+}
+	if ('presence.peoplemon' in data) {
 	 var arr = data['presence.peoplemon']['users_present'];
 	 var text = "People here:";
 	 for(var i=0; i<arr.length; i++) {
 	   text = text + "<div class=\"user\">"+arr[i]+"</div>";
 	 }
 	 $('#people').html(text);
-
+}
+	if ('transportmon.cta.bus_152' in data) {
+	 var arrbus = data['transportmon.cta.bus_152'];
+	 var textbus = "Bus 152:";
+	 for(var key in arrbus) {
+	   textbus = textbus + "<div class=\"direction\"><span>"+key+"</span>";
+	   for (element in arrbus[key]) {
+		textbus = textbus + "<div class=\"time\">" + arrbus[key][element] + "</div>";
+		}
+	   textbus = textbus + "</div>";
+	 }
+	 $('#bus_152').html(textbus);
+}
 datag.push((data['spacemon.electronics'].ratio_busy-0.44));
 // redraw the line, and slide it to the left
 path
